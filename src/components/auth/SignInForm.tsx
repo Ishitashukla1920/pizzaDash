@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react'; // Ensure signIn is imported
+import { signIn } from 'next-auth/react'; 
 import {
   EyeIcon,
   EyeSlashIcon,
@@ -43,7 +43,7 @@ export default function SignInForm() {
 
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) { // This validation should ideally match your backend's password policy
+    } else if (formData.password.length < 6){
       newErrors.password = 'Password must be at least 6 characters';
     }
 
@@ -57,33 +57,32 @@ export default function SignInForm() {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    setErrors({}); // Clear previous errors
+    setErrors({}); 
 
     try {
-      // Use NextAuth's signIn function for credentials
-      // The `callbackUrl` will tell NextAuth where to redirect after successful sign-in
+      
       const result = await signIn('credentials', {
         email: formData.email,
         password: formData.password,
-        redirect: false, // Set to false to handle redirect manually if there's an error,
-                         // otherwise NextAuth will redirect to callbackUrl on success.
-                         // We'll manually redirect to catch errors.
+        redirect: false, 
       });
 
       if (result?.error) {
-        // This 'error' comes from your CredentialsProvider's authorize function
-        // if it returns null or throws an error.
         setErrors({ submit: result.error });
       } else if (result?.ok) {
-        // If signIn was successful, NextAuth has handled setting the session cookie.
-        // Now, we can manually redirect to the dashboard.
         router.push('/dashboard');
       }
       
-    } catch (error: any) {
-      // Catch any unexpected errors during the signIn process
+    } catch (error: unknown) {
       console.error("Sign-in error:", error);
-      setErrors({ submit: error.message || 'An unexpected error occurred during sign-in. Please try again.' });
+  const message =
+    error instanceof Error
+      ? error.message
+      : String(error);
+  setErrors({
+    submit:
+      message ||
+      'An unexpected error occurred during sign-in. Please try again.',  });
     } finally {
       setIsLoading(false);
     }
@@ -92,8 +91,7 @@ export default function SignInForm() {
   const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
-      setErrors({}); // Clear previous errors
-      // NextAuth handles the Google OAuth flow and redirects automatically to callbackUrl on success
+      setErrors({}); 
       await signIn('google', { callbackUrl: '/dashboard' });
     } catch (error) {
       console.error('Google sign-in error:', error);
@@ -213,7 +211,7 @@ export default function SignInForm() {
           </div>
         </div>
 
-        {/* Remember Me & Forgot Password */}
+        
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <input
@@ -259,7 +257,8 @@ export default function SignInForm() {
         {/* Sign Up Link */}
         <div className="text-center">
           <p className="text-gray-400 text-sm">
-            Don't have an account?{' '}
+            Don&apos;t have an account?
+
             <Link
               href="/signup"
               className="text-orange-400 hover:text-orange-300 font-medium transition-colors"

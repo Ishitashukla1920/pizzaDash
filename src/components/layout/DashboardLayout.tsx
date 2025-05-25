@@ -8,7 +8,6 @@ import {
   ClipboardDocumentListIcon,
   XMarkIcon,
   BellIcon,
-  MagnifyingGlassIcon,
   ChevronDownIcon,
   Cog6ToothIcon,
   UserIcon,

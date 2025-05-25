@@ -110,8 +110,15 @@ export default function SignUpForm() {
       }
 
     } catch (error: any) {
-      console.error("Signup process error:", error);
-      setErrors({ submit: error.message || 'An unexpected error occurred during signup. Please try again.' });
+      console.error("Sigup-in error:", error);
+  const message =
+    error instanceof Error
+      ? error.message
+      : String(error);
+  setErrors({
+    submit:
+      message ||
+      'An unexpected error occurred during sign-in. Please try again.',  });
     } finally {
       setIsLoading(false);
     }
