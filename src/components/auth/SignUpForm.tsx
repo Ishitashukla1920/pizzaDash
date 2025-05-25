@@ -1,5 +1,3 @@
-// src/app/auth/signup/SignUpForm.tsx
-// Or wherever your signup page component is located
 
 'use client';
 
@@ -76,10 +74,9 @@ export default function SignUpForm() {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    setErrors({}); // Clear previous errors
+    setErrors({}); 
 
     try {
-      // 1. Call your custom /api/register endpoint to "register" the user
       const registerResponse = await fetch('/api/register', {
         method: 'POST',
         headers: {
@@ -89,31 +86,26 @@ export default function SignUpForm() {
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          // Note: confirmPassword is handled client-side validation only
         }),
       });
 
       const registerData = await registerResponse.json();
 
       if (!registerResponse.ok) {
-        // If registration fails, display the error from the backend
         setErrors({ submit: registerData.message || 'Signup failed. Please try again.' });
-        setIsLoading(false); // Stop loading before returning
-        return; // Exit if registration failed
+        setIsLoading(false); 
+        return; 
       }
 
-      // 2. If registration was successful, then sign the user in using NextAuth's credentials provider
       const signInResult = await signIn('credentials', {
-        redirect: false, // Prevent NextAuth from redirecting automatically here
+        redirect: false, 
         email: formData.email,
         password: formData.password,
       });
 
       if (signInResult?.error) {
-        // Handle errors from the signIn attempt (e.g., if credentials provider somehow fails after register)
         setErrors({ submit: signInResult.error });
       } else if (signInResult?.ok) {
-        // If signIn is successful and no error, redirect to dashboard
         router.push('/dashboard');
       }
 
@@ -128,8 +120,7 @@ export default function SignUpForm() {
   const handleGoogleSignUp = async () => {
     try {
       setIsGoogleLoading(true);
-      setErrors({}); // Clear previous errors
-      // Use signIn for Google, NextAuth handles the OAuth flow and redirection
+      setErrors({}); 
       await signIn('google', { callbackUrl: '/dashboard' });
     } catch (error) {
       console.error('Google sign-up error:', error);

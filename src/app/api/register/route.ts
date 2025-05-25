@@ -1,21 +1,17 @@
-// src/app/api/register/route.ts
+
 
 import { NextResponse } from 'next/server';
 
-// !!! IMPORTANT: This is for DEMO PURPOSES ONLY.
-// In a real application, replace this with a proper database like MongoDB, PostgreSQL, etc.
-// Data stored here will be lost when your Next.js development server restarts.
+
 interface TempUser {
     id: string;
     name: string;
     email: string;
-    password: string; // In a real app, this MUST be hashed (e.g., using bcrypt)
+    password: string; 
 }
-// Initialize with your demo user for testing the sign-in
 const tempUsers: TempUser[] = [
     { id: "demo-user-id-001", name: "Demo User", email: "demo@pizzadash.com", password: "demo123" },
 ];
-// !!! END TEMP USER STORAGE !!!
 
 export async function POST(request: Request) {
   try {
@@ -33,20 +29,18 @@ export async function POST(request: Request) {
     }
 
 
-    // Check if user with this email already exists in our temporary store
     if (tempUsers.some(user => user.email === email)) {
       return NextResponse.json({ message: 'User with this email already exists.' }, { status: 409 });
     }
 
-    // Simulate user creation (in real app: hash password, save to DB)
-    const newUserId = `user-${Date.now()}`; // Simple unique ID
+    const newUserId = `user-${Date.now()}`; 
     const newUser: TempUser = {
       id: newUserId,
       name,
       email,
-      password, // Again, HASH THIS IN A REAL APP!
+      password, 
     };
-    tempUsers.push(newUser); // Add to our in-memory array
+    tempUsers.push(newUser); 
     console.log("New user registered (in-memory):", newUser);
 
     return NextResponse.json({ message: 'User registered successfully!', user: { id: newUser.id, name: newUser.name, email: newUser.email } }, { status: 201 });

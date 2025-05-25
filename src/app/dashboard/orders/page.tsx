@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import {
-  FunnelIcon, // Not used in the provided code, but kept for completeness
+  FunnelIcon, 
   PlusIcon,
   ChevronUpDownIcon,
   EyeIcon,
@@ -17,7 +17,6 @@ import {
 } from '@heroicons/react/24/outline';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 
-// Mock data for pizza orders
 const orders = [
   {
     id: 'PZA001',
@@ -74,7 +73,6 @@ const orders = [
     total: 31.98,
     address: '654 Maple Ave, Uptown'
   },
-  // Added more mock data for better testing of responsiveness with more rows
   {
     id: 'PZA006',
     customerName: 'Alice Green',
@@ -132,7 +130,7 @@ const orders = [
   },
 ];
 
-// Utility functions (moved outside the component for better readability and potential reusability)
+// Utility functions
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -200,7 +198,7 @@ export default function OrdersPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // --- Filtering and Sorting Logic ---
+  // sorting
   const filteredAndSortedOrders = orders
     .filter(order => {
       const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
@@ -209,7 +207,7 @@ export default function OrdersPage() {
         order.customerName.toLowerCase().includes(lowerCaseSearchTerm) ||
         order.id.toLowerCase().includes(lowerCaseSearchTerm) ||
         order.pizzaType.toLowerCase().includes(lowerCaseSearchTerm) ||
-        order.customerPhone.includes(lowerCaseSearchTerm); // Added phone search for better UX
+        order.customerPhone.includes(lowerCaseSearchTerm); 
       return matchesStatus && matchesSearch;
     })
     .sort((a, b) => {
@@ -218,7 +216,7 @@ export default function OrdersPage() {
         comparison = new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime();
       } else if (sortField === 'quantity' || sortField === 'total') {
         comparison = (a as any)[sortField] - (b as any)[sortField];
-      } else { // Default to string comparison for other fields
+      } else {
         comparison = String((a as any)[sortField]).localeCompare(String((b as any)[sortField]));
       }
 
@@ -231,11 +229,10 @@ export default function OrdersPage() {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
       setSortField(field);
-      setSortDirection('asc'); // Default to ascending when changing sort field
+      setSortDirection('asc'); 
     }
   };
 
-  // --- Data for Stats and Filters ---
   const statusCounts = orders.reduce((acc: { [key: string]: number }, order) => {
     acc[order.status] = (acc[order.status] || 0) + 1;
     return acc;
@@ -262,7 +259,7 @@ export default function OrdersPage() {
     <DashboardLayout>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
         <div className="p-4 sm:p-6 max-w-7xl mx-auto">
-          {/* Header Section - Responsive adjustments */}
+          {/* Header Section */}
           <div className="mb-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
               <div className="flex items-center gap-3">
@@ -282,7 +279,7 @@ export default function OrdersPage() {
               </button>
             </div>
 
-            {/* Compact Stats Grid - Made responsive with grid-cols-2 and lg:grid-cols-4 */}
+            {/* Compact Stats Grid */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-slate-200/50 shadow-sm hover:shadow-md transition-all duration-200">
                 <div className="flex items-center justify-between">
@@ -334,10 +331,10 @@ export default function OrdersPage() {
             </div>
           </div>
 
-          {/* Compact Filter Bar - Responsive adjustments */}
+          {/* Compact Filter Bar */}
           <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-slate-200/50 shadow-sm mb-6">
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-              {/* Search Input - flex-1 and w-full for full width on smaller screens */}
+              {/* Search Input  */}
               <div className="relative flex-1 max-w-sm w-full">
                 <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <input
@@ -349,7 +346,7 @@ export default function OrdersPage() {
                 />
               </div>
 
-              {/* Status Filter Pills - Responsive flex-wrap and justify-end for right alignment on larger screens */}
+              {/* Status Filter */}
               <div className="flex gap-2 flex-wrap justify-end">
                 {statusOptions.map((option) => (
                   <button
@@ -375,7 +372,7 @@ export default function OrdersPage() {
             </div>
           </div>
 
-          {/* Enhanced Orders Table */}
+          {/* Orders Table */}
           <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-slate-200/50 shadow-lg overflow-hidden">
             <div className="px-4 py-3 border-b border-slate-200/50 bg-slate-50/50 flex justify-between items-center">
               <h3 className="text-base font-semibold text-slate-900">
@@ -386,7 +383,7 @@ export default function OrdersPage() {
               </div>
             </div>
 
-            {/* Responsive Table Wrapper - overflow-x-auto for horizontal scrolling on small screens */}
+            {/* Responsive Table Wrapper  */}
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-slate-200/50">
                 <thead className="bg-slate-50/50">
@@ -398,12 +395,11 @@ export default function OrdersPage() {
                       { key: 'quantity', label: 'Qty' },
                       { key: 'total', label: 'Total' },
                       { key: 'orderDate', label: 'Time' },
-                      { key: 'status', label: 'Status' }, // Made status sortable for better UX
+                      { key: 'status', label: 'Status' }, 
                       { key: null, label: 'Actions' }
                     ].map((header) => (
                       <th
                         key={header.label}
-                        // min-w-[70px] ensures columns don't become too narrow
                         className={`px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider min-w-[70px] ${
                           header.key ? 'cursor-pointer hover:bg-slate-100/50 transition-colors' : ''
                         }`}

@@ -210,12 +210,12 @@ export default function DashboardLayout({
           </button>
 
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-            {/* Enhanced Search bar */}
+            {/* Search bar */}
            
           </div>
             
           <div className="flex items-center gap-x-4 lg:gap-x-6">
-            {/* Enhanced Notifications */}
+            {/* Notifications */}
             <button
               type="button"
               className="relative -m-2.5 p-2.5 text-gray-400 hover:text-gray-500 hover:bg-gray-100/80 rounded-lg transition-all duration-200 hover:scale-105"
@@ -227,7 +227,7 @@ export default function DashboardLayout({
               </span>
             </button>
 
-            {/* Enhanced Profile dropdown */}
+            {/* Profile dropdown */}
             <Menu as="div" className="relative">
               <Menu.Button className="flex items-center gap-2 p-1.5 hover:bg-gray-100/80 rounded-lg transition-all duration-200 hover:scale-105">
                 <span className="sr-only">Open user menu</span>

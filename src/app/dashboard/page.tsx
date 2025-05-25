@@ -14,7 +14,7 @@ export default function DashboardPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-white/60 via-transparent to-transparent"></div>
         </div>
         
-        {/* Floating orbs for visual interest */}
+      
         <div className="absolute top-20 right-20 w-64 h-64 bg-orange-200/30 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 left-20 w-80 h-80 bg-red-200/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-yellow-200/30 rounded-full blur-3xl animate-pulse delay-500"></div>
