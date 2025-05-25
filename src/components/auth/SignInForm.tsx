@@ -226,12 +226,7 @@ export default function SignInForm() {
           </div>
 
           <div className="text-sm">
-            <Link
-              href="/forgot-password"
-              className="text-orange-400 hover:text-orange-300 transition-colors"
-            >
-              Forgot password?
-            </Link>
+            
           </div>
         </div>
 
