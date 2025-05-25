@@ -73,7 +73,7 @@ export default function SignInForm() {
         router.push('/dashboard');
       }
       
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Sign-in error:", error);
   const message =
     error instanceof Error

@@ -109,7 +109,7 @@ export default function SignUpForm() {
         router.push('/dashboard');
       }
 
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Sigup-in error:", error);
   const message =
     error instanceof Error

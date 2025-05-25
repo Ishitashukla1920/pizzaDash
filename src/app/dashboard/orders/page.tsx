@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  FunnelIcon, 
+import { 
   PlusIcon,
   ChevronUpDownIcon,
   EyeIcon,
