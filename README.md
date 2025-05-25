@@ -1,106 +1,157 @@
-# Pizza Dashboard
+# PizzaDash
 
-A modern pizza order management dashboard built with Next.js, TypeScript, and Tailwind CSS.
+A modern pizza order management dashboard built with **Next.js**, **TypeScript**, and **Tailwind CSS**.
 
-## Features
+---
 
-- 🔐 Google OAuth Authentication
-- 📊 Pizza Order Management
-- 📱 Responsive Design
-- 🎨 Modern UI/UX
-- 🔍 Sorting and Filtering
-- ⚡ Fast Performance
+## 🚀 Features
 
-## Tech Stack
+* 🔐 **Google OAuth Authentication** (via NextAuth.js)
+* 📊 **Pizza Order Management** (sorting, filtering, stats)
+* 📱 **Responsive Design** across devices
+* 🎨 **Modern UI/UX** with Headless UI & Hero Icons
+* 🔍 **Fast Filtering & Sorting** of orders
+* ⚡ **High Performance** with Next.js optimizations
 
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
-- NextAuth.js
-- Headless UI
-- Hero Icons
-- Date-fns
-- Clsx
+---
 
-## Getting Started
+## 🧱 Technology Stack
+
+* **Next.js 14** (App Router)
+* **TypeScript** for type-safe code
+* **Tailwind CSS** for utility-first styling
+* **NextAuth.js** for authentication
+* **Headless UI** for accessible components
+* **Hero Icons** for crisp SVG icons
+* **date-fns** for date formatting
+* **clsx** for conditional classNames
+
+---
+
+## 👤 Demo User
+
+* **Email:** `demo@pizzadash.com`
+* **Password:** `demo123`
+
+> The login/signup page is not connected to a backend—use Google OAuth or the above demo credentials to access the dashboard.
+
+---
+
+## 🔧 Getting Started
 
 ### Prerequisites
 
-- Node.js 18.17 or later
-- npm or yarn
-- A Google Cloud Console account for OAuth credentials
+* **Node.js** 18.17 or later
+* **npm** or **yarn**
+* A **Google Cloud Console** account for OAuth credentials
 
 ### Installation
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/pizza-dashboard.git
-cd pizza-dashboard
-```
+1. **Clone the repository**
 
-2. Install dependencies:
-```bash
-npm install
-# or
-yarn install
-```
+   ```bash
+   git clone https://github.com/yourusername/pizza-dashboard.git
+   cd pizza-dashboard
+   ```
 
-3. Create a `.env.local` file in the root directory with the following variables:
-```env
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-secret-key # Generate a random string
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-```
+2. **Install dependencies**
 
-4. Start the development server:
-```bash
-npm run dev
-# or
-yarn dev
-```
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+3. **Create environment file**
 
-### Setting up Google OAuth
+   * Create a `.env.local` in the project root:
 
-1. Go to the [Google Cloud Console](https://console.cloud.google.com)
+     ```env
+     NEXTAUTH_URL=http://localhost:3000
+     NEXTAUTH_SECRET=your-secret-key      # generate a random string
+     GOOGLE_CLIENT_ID=your-google-client-id
+     GOOGLE_CLIENT_SECRET=your-google-client-secret
+     ```
+
+4. **Run development server**
+
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## ⚙️ Setting up Google OAuth
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project or select an existing one
-3. Enable the Google OAuth2 API
-4. Configure the OAuth consent screen
-5. Create OAuth 2.0 credentials (Client ID and Client Secret)
-6. Add authorized redirect URIs:
-   - http://localhost:3000/api/auth/callback/google (for development)
-   - https://your-production-domain.com/api/auth/callback/google (for production)
+3. **Configure OAuth Consent Screen**:
 
-## Project Structure
+   * Set app name, support email, developer contact
+4. **Create OAuth 2.0 credentials**
+
+   * Go to **APIs & Services > Credentials**
+   * Click **+ CREATE CREDENTIALS > OAuth client ID**
+   * Choose **Web application**
+   * Under **Authorized JavaScript Origins**, add:
+
+     ```
+     http://localhost:3000
+     ```
+   * Under **Authorized redirect URIs**, add:
+
+     ```
+     http://localhost:3000/api/auth/callback/google
+     https://your-production-domain.com/api/auth/callback/google
+     ```
+5. **Save** your Client ID & Client Secret into `.env.local`.
+
+---
+
+## 📁 Project Structure
 
 ```
 src/
-├── app/                    # Next.js app directory
+├── app/                   # Next.js App Router directory
 │   ├── api/               # API routes
-│   ├── auth/              # Authentication pages
-│   └── dashboard/         # Dashboard pages
-├── components/            # React components
-│   ├── auth/             # Authentication components
-│   ├── layout/           # Layout components
-│   └── providers/        # Context providers
-└── middleware.ts         # Authentication middleware
-```
+│   ├── auth/              # Authentication pages/components
+│   └── dashboard/         # Dashboard pages/components
+├── components/            # Reusable React components
+│   ├── auth/              # Sign-in/sign-up forms
+│   ├── layout/            # Layout wrappers (e.g., DashboardLayout)
+│   └── providers/         # Context providers
+├── styles/                # Tailwind config and globals
+└── middleware.ts          # Auth middleware
 
-## Deployment
+---
 
-This project is ready to be deployed to Vercel or Railway:
+## 🚢 Deployment
 
+### Vercel (recommended)
 1. Push your code to GitHub
-2. Connect your repository to Vercel or Railway
-3. Configure environment variables
-4. Deploy!
+2. Import project in Vercel dashboard
+3. Add environment variables in settings
+4. Deploy (automatic on push)
 
-## Contributing
+### Railway (alternative)
+1. Connect your GitHub repo to Railway
+2. Configure environment variables
+3. Deploy
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+---
 
-## License
+## 🤝 Contributing
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
+Contributions welcome! Feel free to open issues or submit pull requests.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+
+```
