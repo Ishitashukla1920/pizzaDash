@@ -1,0 +1,371 @@
+// src/app/auth/signup/SignUpForm.tsx
+// Or wherever your signup page component is located
+
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
+import {
+  EyeIcon,
+  EyeSlashIcon,
+  EnvelopeIcon,
+  LockClosedIcon,
+  UserIcon,
+  ArrowRightIcon
+} from '@heroicons/react/24/outline';
+
+export default function SignUpForm() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const router = useRouter();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = 'Name must be at least 2 characters';
+    }
+
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your password';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    setErrors({}); // Clear previous errors
+
+    try {
+      // 1. Call your custom /api/register endpoint to "register" the user
+      const registerResponse = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          // Note: confirmPassword is handled client-side validation only
+        }),
+      });
+
+      const registerData = await registerResponse.json();
+
+      if (!registerResponse.ok) {
+        // If registration fails, display the error from the backend
+        setErrors({ submit: registerData.message || 'Signup failed. Please try again.' });
+        setIsLoading(false); // Stop loading before returning
+        return; // Exit if registration failed
+      }
+
+      // 2. If registration was successful, then sign the user in using NextAuth's credentials provider
+      const signInResult = await signIn('credentials', {
+        redirect: false, // Prevent NextAuth from redirecting automatically here
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (signInResult?.error) {
+        // Handle errors from the signIn attempt (e.g., if credentials provider somehow fails after register)
+        setErrors({ submit: signInResult.error });
+      } else if (signInResult?.ok) {
+        // If signIn is successful and no error, redirect to dashboard
+        router.push('/dashboard');
+      }
+
+    } catch (error: any) {
+      console.error("Signup process error:", error);
+      setErrors({ submit: error.message || 'An unexpected error occurred during signup. Please try again.' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    try {
+      setIsGoogleLoading(true);
+      setErrors({}); // Clear previous errors
+      // Use signIn for Google, NextAuth handles the OAuth flow and redirection
+      await signIn('google', { callbackUrl: '/dashboard' });
+    } catch (error) {
+      console.error('Google sign-up error:', error);
+      setErrors({ submit: 'Google sign-up failed. Please try again.' });
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Google Sign Up Button */}
+      <button
+        onClick={handleGoogleSignUp}
+        disabled={isGoogleLoading || isLoading}
+        className="w-full flex justify-center items-center py-3 px-4 border border-white/10 rounded-xl text-sm font-medium text-white bg-white/5 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-[1.02]"
+      >
+        {isGoogleLoading ? (
+          <div className="flex items-center">
+            <div className="animate-spin -ml-1 mr-3 h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+            Creating account...
+          </div>
+        ) : (
+          <div className="flex items-center">
+            <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+              <path
+                fill="currentColor"
+                d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"
+              />
+            </svg>
+            Continue with Google
+          </div>
+        )}
+      </button>
+
+      {/* Divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-white/10" />
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-gray-400">Or sign up with email</span>
+        </div>
+      </div>
+
+      {/* Email/Password Form */}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {errors.submit && (
+          <div className="bg-red-500/10 border border-red-500/20 text-red-300 px-4 py-3 rounded-xl text-sm">
+            {errors.submit}
+          </div>
+        )}
+
+        <div className="space-y-4">
+          {/* Name Field */}
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-200 mb-2">
+              Full Name
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <UserIcon className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="block w-full pl-10 pr-3 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                placeholder="Enter your full name"
+                disabled={isLoading || isGoogleLoading}
+              />
+            </div>
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-400">{errors.name}</p>
+            )}
+          </div>
+
+          {/* Email Field */}
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
+              Email Address
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <EnvelopeIcon className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="block w-full pl-10 pr-3 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                placeholder="Enter your email"
+                disabled={isLoading || isGoogleLoading}
+              />
+            </div>
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-400">{errors.email}</p>
+            )}
+          </div>
+
+          {/* Password Field */}
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-200 mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <LockClosedIcon className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="block w-full pl-10 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                placeholder="Create a password"
+                disabled={isLoading || isGoogleLoading}
+              />
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-gray-400 hover:text-gray-300 transition-colors"
+                  disabled={isLoading || isGoogleLoading}
+                >
+                  {showPassword ? (
+                    <EyeSlashIcon className="h-5 w-5" />
+                  ) : (
+                    <EyeIcon className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-400">{errors.password}</p>
+            )}
+          </div>
+
+          {/* Confirm Password Field */}
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-200 mb-2">
+              Confirm Password
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <LockClosedIcon className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="block w-full pl-10 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                placeholder="Confirm your password"
+                disabled={isLoading || isGoogleLoading}
+              />
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="text-gray-400 hover:text-gray-300 transition-colors"
+                  disabled={isLoading || isGoogleLoading}
+                >
+                  {showConfirmPassword ? (
+                    <EyeSlashIcon className="h-5 w-5" />
+                  ) : (
+                    <EyeIcon className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+            {errors.confirmPassword && (
+              <p className="mt-1 text-sm text-red-400">{errors.confirmPassword}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Terms and Conditions */}
+        <div className="flex items-center">
+          <input
+            id="terms"
+            name="terms"
+            type="checkbox"
+            required
+            className="h-4 w-4 bg-white/5 border-white/10 rounded focus:ring-purple-500 focus:ring-2 text-purple-500"
+          />
+          <label htmlFor="terms" className="ml-2 block text-sm text-gray-300">
+            I agree to the{' '}
+            <Link href="/terms" className="text-purple-400 hover:text-purple-300 transition-colors">
+              Terms of Service
+            </Link>
+            {' '}and{' '}
+            <Link href="/privacy" className="text-purple-400 hover:text-purple-300 transition-colors">
+              Privacy Policy
+            </Link>
+          </label>
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={isLoading || isGoogleLoading}
+          className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-[1.02] hover:shadow-lg"
+        >
+          {isLoading ? (
+            <div className="flex items-center">
+              <div className="animate-spin -ml-1 mr-3 h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+              Creating account...
+            </div>
+          ) : (
+            <div className="flex items-center">
+              <span>Create Account</span>
+              <ArrowRightIcon className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          )}
+        </button>
+
+        {/* Sign In Link */}
+        <div className="text-center">
+          <p className="text-gray-400 text-sm">
+            Already have an account?{' '}
+            <Link
+              href="/auth/signin"
+              className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
+            >
+              Sign in here
+            </Link>
+          </p>
+        </div>
+      </form>
+    </div>
+  );
+}
